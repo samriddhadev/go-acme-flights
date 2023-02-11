@@ -1,0 +1,15 @@
+INSERT INTO public.iata(name, code) VALUES('Mumbai', 'BOM');
+INSERT INTO public.iata(name, code) VALUES('Delhi', 'DEL');
+INSERT INTO public.iata(name, code) VALUES('Frankfurt', 'FRA');
+INSERT INTO public.iata(name, code) VALUES('Hong Kong', 'HKG');
+INSERT INTO public.iata(name, code) VALUES('London', 'LHR');
+INSERT INTO public.iata(name, code) VALUES('Montreal', 'YUL');
+INSERT INTO public.iata(name, code) VALUES('Moscow', 'SVO');
+INSERT INTO public.iata(name, code) VALUES('New York', 'JFK');
+INSERT INTO public.iata(name, code) VALUES('Paris', 'CDG');
+INSERT INTO public.iata(name, code) VALUES('Rome', 'FCO');
+INSERT INTO public.iata(name, code) VALUES('Singapore', 'SIN');
+INSERT INTO public.iata(name, code) VALUES('Sydney', 'SYD');
+INSERT INTO public.iata(name, code) VALUES('Tehran', 'IKA');
+INSERT INTO public.iata(name, code) VALUES('Tokyo', 'NRT');
+commit;

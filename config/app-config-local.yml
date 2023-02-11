@@ -1,0 +1,3 @@
+app-name: acme-flight-service
+port: 7000
+basepath: /acme-service/api/flights
