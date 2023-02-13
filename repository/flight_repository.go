@@ -2,15 +2,16 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"log"
 
 	"github.com/samriddhadev/go-acme-flights/config"
 	"github.com/samriddhadev/go-acme-flights/domain"
+	"github.com/uptrace/bun"
 )
 
 func NewAcmeFlightRepository() AcmeFlightRepository {
-	return AcmeFlightRepository {
-
-	}
+	return AcmeFlightRepository{}
 }
 
 type AcmeFlightRepository struct {
@@ -28,7 +29,26 @@ func (repository *AcmeFlightRepository) FindAll(cfg *config.Config) (*[]domain.F
 func (repository *AcmeFlightRepository) InsertOne(cfg *config.Config, flight *domain.Flight) error {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
-	_, err := db.NewInsert().Model(flight).Exec(ctx)
+	err := db.RunInTx(ctx, &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
+		var segment domain.FlightSegment = *flight.Segment
+		segmentResult, err := tx.NewInsert().Model(&segment).Exec(ctx)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		if _, err = segmentResult.RowsAffected(); err != nil {
+			log.Println(err)
+			return err
+		}
+		flight.SegmentID = segment.Id
+		flight.Segment.Id = segment.Id
+		_, err = tx.NewInsert().Model(flight).Exec(ctx)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		return nil
+	})
 	return err
 }
 
@@ -43,7 +63,8 @@ func (repository *AcmeFlightRepository) FindOne(cfg *config.Config, id int) (*do
 func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, flight *domain.Flight) (*domain.Flight, error) {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
-	_, err := db.NewUpdate().Model(flight).Where("id = ?", id).Exec(ctx); if err != nil {
+	_, err := db.NewUpdate().Model(flight).Where("id = ?", id).Exec(ctx)
+	if err != nil {
 		return &domain.Flight{}, err
 	}
 	return repository.FindOne(cfg, id)
@@ -52,7 +73,8 @@ func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, fl
 func (repository *AcmeFlightRepository) DeleteOne(cfg *config.Config, id int) error {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
-	flight, err := repository.FindOne(cfg, id); if err != nil {
+	flight, err := repository.FindOne(cfg, id)
+	if err != nil {
 		return err
 	}
 	_, err = db.NewDelete().Model(&flight).Exec(ctx)

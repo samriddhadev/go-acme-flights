@@ -3,6 +3,7 @@ module github.com/samriddhadev/go-acme-flights
 go 1.18
 
 require (
+	github.com/fatih/color v1.14.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.8.2 // indirect
@@ -16,6 +17,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -32,6 +34,7 @@ require (
 	github.com/uptrace/bun v1.1.11 // indirect
 	github.com/uptrace/bun/dialect/pgdialect v1.1.11 // indirect
 	github.com/uptrace/bun/driver/pgdriver v1.1.11 // indirect
+	github.com/uptrace/bun/extra/bundebug v1.1.11 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect

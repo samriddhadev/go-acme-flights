@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/samriddhadev/go-acme-flights/service"
 )
 
@@ -32,7 +33,17 @@ func (controller *AcmeFlightController) GetFlights(cfg *config.Config) gin.Handl
 
 func (controller *AcmeFlightController) CreateFlights(cfg *config.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		var flight *model.Flight
+		if err := ctx.BindJSON(&flight); err != nil {
+			log.Println(err)
+			ctx.JSON(http.StatusInternalServerError, err)	
+		}
+		err := controller.flightService.CreateFlight(cfg, flight)
+		if err != nil {
+			log.Println(err)
+			ctx.JSON(http.StatusInternalServerError, err)
+		}
+		ctx.JSON(http.StatusCreated, nil)
 	}
 }
 

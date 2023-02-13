@@ -3,12 +3,12 @@ package model
 import "time"
 
 type Flight struct {
-	Id                     int       `json:"id"`
+	Id                     int64     `json:"id"`
 	Name                   string    `json:"name"`
 	Origin                 string    `json:"origin"`
 	Destination            string    `json:"destination"`
 	Miles                  int       `json:"miles"`
-	ScheduledDepartureTime time.Time `json:"scheduled_departure_time"`
+	ScheduledDepartureTime time.Time `json:"scheduled_departure_time"` //rfc3339
 	ScheduledArrivalTime   time.Time `json:"scheduled_arrival_time"`
 	FirstClassBaseCost     float64   `json:"first_class_base_price"`
 	EconomyClassBaseCost   float64   `json:"economy_class_base_price"`

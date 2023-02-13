@@ -12,6 +12,7 @@ import (
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 
@@ -28,7 +29,6 @@ func (base BaseRepository) getConnection(cfg *config.Config) *pgdriver.Connector
 			pgdriver.WithNetwork(cfg.FlightDB.Network),
 			pgdriver.WithAddr(fmt.Sprintf("%s:%s", cfg.FlightDB.Host, strconv.Itoa(cfg.FlightDB.Port))),
 			pgdriver.WithInsecure(true),
-			//pgdriver.WithTLSConfig(&tls.Config{InsecureSkipVerify: true}),
 			pgdriver.WithUser(cfg.FlightDB.User),
 			pgdriver.WithPassword(os.Getenv(cfg.FlightDB.PasswordKey)),
 			pgdriver.WithDatabase(cfg.FlightDB.Database),
@@ -45,5 +45,7 @@ func (base BaseRepository) getConnection(cfg *config.Config) *pgdriver.Connector
 func (base BaseRepository) GetDB(cfg *config.Config) *bun.DB {
 	sqldb := sql.OpenDB(base.getConnection(cfg))
 	db := bun.NewDB(sqldb, pgdialect.New())
+	db.AddQueryHook(bundebug.NewQueryHook())
+	bundebug.NewQueryHook(bundebug.WithVerbose(true))
 	return db
 } 

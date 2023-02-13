@@ -8,8 +8,8 @@ import (
 
 type Flight struct {
 	bun.BaseModel          `bun:"table:flights,alias:fl"`
-	Id                     int `bun:",pk,autoincrement"`
-	SegmentId              int
+	Id                     int64          `bun:",pk,autoincrement"`
+	SegmentID              int64          `bun:"segment_id"`
 	Segment                *FlightSegment `bun:"rel:belongs-to,join:segment_id=id"`
 	ScheduledDepartureTime time.Time
 	ScheduledArrivalTime   time.Time

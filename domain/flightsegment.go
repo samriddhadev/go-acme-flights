@@ -4,7 +4,7 @@ import "github.com/uptrace/bun"
 
 type FlightSegment struct {
 	bun.BaseModel `bun:"table:flights_segments,alias:flsg"`
-	Id            int `bun:",pk,autoincrement"`
+	Id            int64 `bun:",pk,autoincrement"`
 	Name          string
 	Origin        string
 	Destination   string

@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/domain"
 	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/samriddhadev/go-acme-flights/repository"
 )
@@ -17,7 +18,7 @@ type AcmeFlightService struct {
 	flightRepository repository.AcmeFlightRepository
 }
 
-func (service *AcmeFlightService) GetFlights(cfg *config.Config) (*[]model.Flight, error) {
+ func (service *AcmeFlightService) GetFlights(cfg *config.Config) (*[]model.Flight, error) {
 	flights := []model.Flight{}
 	entities, err := service.flightRepository.FindAll(cfg)
 	if err != nil {
@@ -40,4 +41,28 @@ func (service *AcmeFlightService) GetFlights(cfg *config.Config) (*[]model.Fligh
 		})
 	}
 	return &flights, nil
-} 
+}
+
+func (service *AcmeFlightService) CreateFlight(cfg *config.Config, flight *model.Flight) error {
+	segmentEntity := domain.FlightSegment{
+		Name: flight.Name,
+		Origin: flight.Origin,
+		Destination: flight.Destination,
+		Miles: flight.Miles,
+	}
+	entity := domain.Flight{
+		ScheduledDepartureTime: flight.ScheduledDepartureTime,
+		ScheduledArrivalTime: flight.ScheduledArrivalTime,
+		FirstClassBaseCost: flight.FirstClassBaseCost,
+		EconomyClassBaseCost: flight.EconomyClassBaseCost,
+		NumFirstClassSeats: flight.NumFirstClassSeats,
+		NumEconomyClassSeats: flight.NumEconomyClassSeats,
+		AirplaneTypeId: flight.AirplaneTypeId,
+		Segment: &segmentEntity,
+	}
+	err := service.flightRepository.InsertOne(cfg, &entity)
+	if err != nil {
+		return err
+	}
+	return nil
+}
