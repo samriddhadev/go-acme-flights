@@ -1,21 +1,32 @@
 package controller
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/service"
 )
 
-func NewAcmeFlightController() AcmeFlightController {
-	return AcmeFlightController{}
+func NewAcmeFlightController(flightService service.AcmeFlightService) AcmeFlightController {
+	return AcmeFlightController{
+		flightService: flightService,
+	}
 }
 
 type AcmeFlightController struct {
-
+	flightService service.AcmeFlightService
 }
 
 func (controller *AcmeFlightController) GetFlights(cfg *config.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		flights, err := controller.flightService.GetFlights(cfg)
+		if err != nil {
+			log.Println(err)
+			ctx.JSON(http.StatusInternalServerError, err)
+		}
+		ctx.JSON(http.StatusOK, flights)
 	}
 }
 

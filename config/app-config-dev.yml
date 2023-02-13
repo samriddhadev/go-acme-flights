@@ -1,3 +1,11 @@
 app-name: acme-flight-service
 port: 7000
-basepath: /acme-service/api/flights
+basepath: /api/flights
+flightdb:
+  network: tcp
+  host: localhost
+  port: 5432
+  user: postgres
+  password-key: FLIGHTDBPASSWORD
+  database: acme
+  timeout: 5

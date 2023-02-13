@@ -11,12 +11,16 @@ import (
 	"github.com/samriddhadev/go-acme-flights/api/controller"
 	"github.com/samriddhadev/go-acme-flights/api/router"
 	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/repository"
+	"github.com/samriddhadev/go-acme-flights/service"
 )
 
 // Injectors from wire.go:
 
 func InitializeRouter(cfg *config.Config, ctx *gin.Engine) router.Router {
-	acmeFlightController := controller.NewAcmeFlightController()
+	acmeFlightRepository := repository.NewAcmeFlightRepository()
+	acmeFlightService := service.NewAcmeFlightService(acmeFlightRepository)
+	acmeFlightController := controller.NewAcmeFlightController(acmeFlightService)
 	routerRouter := router.NewRouter(cfg, ctx, acmeFlightController)
 	return routerRouter
 }

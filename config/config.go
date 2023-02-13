@@ -12,9 +12,20 @@ const ENVIRONMENT string = "ENVIRONMENT"
 const CONFIG_FILE_NAME string = "app-config"
 
 type AppConfig struct {
-	AppName  string
-	Port     int
-	BasePath string
+	AppName  string               `yaml:"app-name"`
+	Port     int                  `yaml:"port"`
+	BasePath string               `yaml:"basepath"`
+	FlightDB FlightDatabaseConfig `yaml:"flightdb"`
+}
+
+type FlightDatabaseConfig struct {
+	Network     string `yaml:"network"`
+	Host        string `yaml:"host"`
+	Port        int    `yaml:"port"`
+	User        string `yaml:"user"`
+	PasswordKey string `yaml:"password-key"`
+	Database    string `yaml:"database"`
+	Timeout     int    `yaml:"timeout"`
 }
 
 type Config struct {
