@@ -23,7 +23,7 @@ type Router struct {
 func (router *Router) Handle() {
 	group := router.Ctx.Group(router.Cfg.BasePath)
 	group.GET("/", router.Controller.GetFlights(router.Cfg))
-	group.POST("/", router.Controller.CreateFlights(router.Cfg))
+	group.POST("/", router.Controller.CreateFlight(router.Cfg))
 	group.GET("/:id", router.Controller.GetFlightById(router.Cfg))
 	group.PUT("/:id", router.Controller.PutFlightById(router.Cfg))
 	group.DELETE("/:id", router.Controller.DeleteFlightById(router.Cfg))

@@ -31,7 +31,7 @@ func (controller *AcmeFlightController) GetFlights(cfg *config.Config) gin.Handl
 	}
 }
 
-func (controller *AcmeFlightController) CreateFlights(cfg *config.Config) gin.HandlerFunc {
+func (controller *AcmeFlightController) CreateFlight(cfg *config.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var flight *model.Flight
 		if err := ctx.BindJSON(&flight); err != nil {
