@@ -22,7 +22,7 @@ func (repository *AcmeFlightRepository) FindAll(cfg *config.Config) (*[]domain.F
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
 	flights := []domain.Flight{}
-	err := db.NewSelect().Model(&flights).Scan(ctx)
+	err := db.NewSelect().Model(&flights).Relation("Segment").Scan(ctx)
 	return &flights, err
 }
 
