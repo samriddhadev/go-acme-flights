@@ -21,6 +21,7 @@ type AcmeFlightRepository struct {
 func (repository *AcmeFlightRepository) FindAll(cfg *config.Config) (*[]domain.Flight, error) {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
+	defer db.Close()
 	flights := []domain.Flight{}
 	err := db.NewSelect().Model(&flights).Relation("Segment").Scan(ctx)
 	return &flights, err
@@ -29,6 +30,7 @@ func (repository *AcmeFlightRepository) FindAll(cfg *config.Config) (*[]domain.F
 func (repository *AcmeFlightRepository) InsertOne(cfg *config.Config, flight *domain.Flight) error {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
+	defer db.Close()
 	err := db.RunInTx(ctx, &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
 		var segment domain.FlightSegment = *flight.Segment
 		segmentResult, err := tx.NewInsert().Model(&segment).Exec(ctx)
@@ -55,28 +57,65 @@ func (repository *AcmeFlightRepository) InsertOne(cfg *config.Config, flight *do
 func (repository *AcmeFlightRepository) FindOne(cfg *config.Config, id int) (*domain.Flight, error) {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
+	defer db.Close()
 	flight := domain.Flight{}
-	err := db.NewSelect().Model(&flight).Where("id = ?", id).Scan(ctx)
+	err := db.NewSelect().Model(&flight).Relation("Segment").Where("fl.id = ?", id).Scan(ctx)
 	return &flight, err
 }
 
 func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, flight *domain.Flight) (*domain.Flight, error) {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
-	_, err := db.NewUpdate().Model(flight).Where("id = ?", id).Exec(ctx)
+	defer db.Close()
+	err := db.RunInTx(ctx, &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
+		var segment domain.FlightSegment = *flight.Segment
+		segmentResult, err := tx.NewUpdate().Model(&segment).Where("flsg.id = ?", segment.Id).Exec(ctx)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		if _, err = segmentResult.RowsAffected(); err != nil {
+			log.Println(err)
+			return err
+		}
+		flight.SegmentID = segment.Id
+		flight.Segment.Id = segment.Id
+		_, err = tx.NewUpdate().Model(flight).Where("fl.id = ?", id).Exec(ctx)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return &domain.Flight{}, err
 	}
-	return repository.FindOne(cfg, id)
+	return flight, nil
 }
 
 func (repository *AcmeFlightRepository) DeleteOne(cfg *config.Config, id int) error {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
+	defer db.Close()
+	err := db.RunInTx(ctx, &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
+		flight, err := repository.FindOne(cfg, id)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewDelete().Model(flight).Where("fl.id = ?", id).Exec(ctx)
+		if err != nil {
+			return err
+		}
+		_, err = tx.NewDelete().Model(flight.Segment).Where("flsg.id = ?", flight.Segment.Id).Exec(ctx)
+		return err
+	})
+	return err
+}
+
+func (repository *AcmeFlightRepository) FindOneFlightSegment(cfg *config.Config, id int) (*domain.FlightSegment, error) {
 	flight, err := repository.FindOne(cfg, id)
 	if err != nil {
-		return err
+		return &domain.FlightSegment{}, err
 	}
-	_, err = db.NewDelete().Model(&flight).Exec(ctx)
-	return err
+	return flight.Segment, nil
 }
