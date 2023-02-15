@@ -6,17 +6,21 @@ import (
 	"github.com/samriddhadev/go-acme-flights/config"
 )
 
-func NewRouter(cfg *config.Config, ctx *gin.Engine, controller controller.AcmeFlightController) Router {
+func NewRouter(
+	cfg *config.Config,
+	ctx *gin.Engine,
+	controller controller.AcmeFlightController,
+) Router {
 	return Router{
-		Cfg: cfg,
-		Ctx: ctx,
+		Cfg:        cfg,
+		Ctx:        ctx,
 		Controller: controller,
 	}
 }
 
 type Router struct {
-	Cfg *config.Config
-	Ctx *gin.Engine
+	Cfg        *config.Config
+	Ctx        *gin.Engine
 	Controller controller.AcmeFlightController
 }
 

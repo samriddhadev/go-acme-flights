@@ -6,18 +6,21 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samriddhadev/go-acme-flights/api/validation"
 	"github.com/samriddhadev/go-acme-flights/config"
 	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/samriddhadev/go-acme-flights/service"
 )
 
-func NewAcmeFlightController(flightService service.AcmeFlightService) AcmeFlightController {
+func NewAcmeFlightController(validator validation.Validator, flightService service.AcmeFlightService) AcmeFlightController {
 	return AcmeFlightController{
+		validator: validator,
 		flightService: flightService,
 	}
 }
 
 type AcmeFlightController struct {
+	validator validation.Validator
 	flightService service.AcmeFlightService
 }
 

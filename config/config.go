@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/samriddhadev/go-acme-flights/utils"
+	"github.com/samriddhadev/go-acme-flights/util"
 	"github.com/spf13/viper"
 )
 
@@ -41,7 +41,7 @@ func NewConfig() (*Config, error) {
 }
 
 func load() (Config, error) {
-	viper.SetConfigName(fmt.Sprintf("%s-%s", CONFIG_FILE_NAME, utils.GetEnv(ENVIRONMENT, "local")))
+	viper.SetConfigName(fmt.Sprintf("%s-%s", CONFIG_FILE_NAME, util.GetEnv(ENVIRONMENT, "local")))
 	viper.AddConfigPath("./config")
 	err := viper.ReadInConfig()
 	if err != nil {

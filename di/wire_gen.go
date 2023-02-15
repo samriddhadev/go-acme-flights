@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samriddhadev/go-acme-flights/api/controller"
 	"github.com/samriddhadev/go-acme-flights/api/router"
+	"github.com/samriddhadev/go-acme-flights/api/validation"
 	"github.com/samriddhadev/go-acme-flights/config"
 	"github.com/samriddhadev/go-acme-flights/repository"
 	"github.com/samriddhadev/go-acme-flights/service"
@@ -18,9 +19,10 @@ import (
 // Injectors from wire.go:
 
 func InitializeRouter(cfg *config.Config, ctx *gin.Engine) router.Router {
+	validator := validation.NewValidator()
 	acmeFlightRepository := repository.NewAcmeFlightRepository()
 	acmeFlightService := service.NewAcmeFlightService(acmeFlightRepository)
-	acmeFlightController := controller.NewAcmeFlightController(acmeFlightService)
+	acmeFlightController := controller.NewAcmeFlightController(validator, acmeFlightService)
 	routerRouter := router.NewRouter(cfg, ctx, acmeFlightController)
 	return routerRouter
 }
