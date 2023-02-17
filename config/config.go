@@ -12,20 +12,21 @@ const ENVIRONMENT string = "ENVIRONMENT"
 const CONFIG_FILE_NAME string = "app-config"
 
 type AppConfig struct {
-	AppName  string               `yaml:"app-name"`
-	Port     int                  `yaml:"port"`
-	BasePath string               `yaml:"basepath"`
-	FlightDB FlightDatabaseConfig `yaml:"flightdb"`
+	AppName             string               `mapstructure:"app-name"`
+	Port                int                  `mapstructure:"port"`
+	BasePath            string               `mapstructure:"basepath"`
+	APIValidationSchema map[string]string    `mapstructure:"api-validation-schemas"`
+	FlightDB            FlightDatabaseConfig `mapstructure:"flightdb"`
 }
 
 type FlightDatabaseConfig struct {
-	Network     string `yaml:"network"`
-	Host        string `yaml:"host"`
-	Port        int    `yaml:"port"`
-	User        string `yaml:"user"`
-	PasswordKey string `yaml:"password-key"`
-	Database    string `yaml:"database"`
-	Timeout     int    `yaml:"timeout"`
+	Network     string `mapstructure:"network"`
+	Host        string `mapstructure:"host"`
+	Port        int    `mapstructure:"port"`
+	User        string `mapstructure:"user"`
+	PasswordKey string `mapstructure:"password-key"`
+	Database    string `mapstructure:"database"`
+	Timeout     int    `mapstructure:"timeout"`
 }
 
 type Config struct {

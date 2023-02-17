@@ -1,0 +1,48 @@
+{
+    "body": {
+        "type": "object",
+        "required": [
+            "name",
+            "origin",
+            "destination",
+            "miles",
+            "scheduled_departure_time",
+            "scheduled_arrival_time"
+        ],
+        "additionalProperties": false,
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "origin": {
+                "type": "string"
+            },
+            "destination": {
+                "type": "string"
+            },
+            "miles": {
+                "type": "integer"
+            },
+            "scheduled_departure_time": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "scheduled_arrival_time": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "first_class_base_price": {
+                "type": "number"
+            },
+            "economy_class_base_price": {
+                "type": "number"
+            },
+            "num_first_class_seats": {
+                "type": "integer"
+            },
+            "num_economy_class_seats": {
+                "type": "integer"
+            }
+        }
+    }
+}

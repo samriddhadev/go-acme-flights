@@ -1,6 +1,12 @@
 app-name: acme-flight-service
 port: 7000
 basepath: /api/flights
+api-validation-schemas:
+  get-flights: "jsonschema/get-flights.json"
+  create-flight: "jsonschema/create-flight.json"
+  get-flight: "jsonschema/get-flight.json"
+  update-flight: "jsonschema/update-flight.json"
+  delete-flight: "jsonschema/delete-flight.json"
 flightdb:
   network: tcp
   host: localhost

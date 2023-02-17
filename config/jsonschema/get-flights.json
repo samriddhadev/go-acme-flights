@@ -1,0 +1,49 @@
+{
+    "header": {
+        "type": "object",
+        "required": [
+            "X-Api-Key"
+        ],
+        "properties": {
+            "X-Api-Key": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "query": {
+        "type": "object",
+        "properties": {
+            "origin": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "pattern": "^[A-Z*]"
+                }
+            },
+            "destination": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "pattern": "^[A-Z*]"
+                }
+            },
+            "from_date": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            },
+            "to_date": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        }
+    }
+}
