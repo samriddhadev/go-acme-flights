@@ -81,7 +81,7 @@ func (controller *AcmeFlightController) PutFlightById(cfg *config.Config) gin.Ha
 }
 
 func (controller *AcmeFlightController) DeleteFlightById(cfg *config.Config) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+	return controller.validator.Validate(validation.SCHEMA_DELETE_FLIGHT, cfg, func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
@@ -91,5 +91,5 @@ func (controller *AcmeFlightController) DeleteFlightById(cfg *config.Config) gin
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 		ctx.JSON(http.StatusNoContent, nil)
-	}
+	})
 }

@@ -52,7 +52,7 @@ GET http://localhost:7000/api/flights/abc
 
 ###
 # Get flight by id
-GET http://localhost:7000/api/flights/15
+GET http://localhost:7000/api/flights/17
 ###
 
 ###
@@ -74,6 +74,11 @@ content-type: application/json
 }
 
 ###
+# Delete flight by id - Error
+DELETE http://localhost:7000/api/flights/17c
+###
+
+###
 # Delete flight by id
-DELETE http://localhost:7000/api/flights/13
+DELETE http://localhost:7000/api/flights/17
 ###
