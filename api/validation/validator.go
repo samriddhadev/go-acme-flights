@@ -17,18 +17,18 @@ import (
 )
 
 const (
-	SCHEMA_GET_FLIGHTS = "get-flights"
+	SCHEMA_GET_FLIGHTS   = "get-flights"
 	SCHEMA_CREATE_FLIGHT = "create-flight"
-	SCHEMA_GET_FLIGHT = "get-flight"
+	SCHEMA_GET_FLIGHT    = "get-flight"
 	SCHEMA_UPDATE_FLIGHT = "update-flight"
 	SCHEMA_DELETE_FLIGHT = "delete-flight"
 )
 
 type ValidationModel struct {
 	Header *jsonschema.Schema `json:"header"`
-	Query *jsonschema.Schema `json:"query"`
-	URI *jsonschema.Schema `json:"uri"`
-	Body *jsonschema.Schema `json:"body"`
+	Query  *jsonschema.Schema `json:"query"`
+	URI    *jsonschema.Schema `json:"uri"`
+	Body   *jsonschema.Schema `json:"body"`
 }
 
 func NewValidator() Validator {
@@ -43,12 +43,15 @@ func (validator *Validator) loadSchema(key string, cfg *config.Config) (*Validat
 	if validator.schema == nil {
 		validator.schema = map[string]*ValidationModel{}
 	}
-	value, ok := validator.schema[key]; if !ok {
+	value, ok := validator.schema[key]
+	if !ok {
 		log.Printf("loading schema - %s", key)
-		path, ok := cfg.APIValidationSchema[key]; if ok {
+		path, ok := cfg.APIValidationSchema[key]
+		if ok {
 			path = filepath.Join("./config", path)
-			content, err := ioutil.ReadFile(path); if err != nil {
-				return &ValidationModel{}, fmt.Errorf("missing schema definition file - %s", key)	
+			content, err := ioutil.ReadFile(path)
+			if err != nil {
+				return &ValidationModel{}, fmt.Errorf("missing schema definition file - %s", key)
 			} else {
 				schema := &ValidationModel{}
 				err = json.Unmarshal(content, schema)
@@ -70,47 +73,53 @@ func (validator *Validator) validateSchema(schema *ValidationModel, ctx *gin.Con
 	validationFields := []apperror.ValidationField{}
 	if schema != nil {
 		if schema.Header != nil {
-			ok, err := validator.validateRequestParts(&context, schema.Header, ctx.Request.Header, &validationFields, "header"); if !ok {
+			ok, err := validator.validateRequestParts(&context, schema.Header, ctx.Request.Header, &validationFields, "header")
+			if !ok {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
 		}
 		if schema.Query != nil {
-			ok, err := validator.validateRequestParts(&context, schema.Query, ctx.Request.URL.Query(), &validationFields, "query"); if !ok {
+			ok, err := validator.validateRequestParts(&context, schema.Query, ctx.Request.URL.Query(), &validationFields, "query")
+			if !ok {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
 		}
 		if schema.URI != nil {
-			ok, err := validator.validateRequestParts(&context, schema.URI, ctx.Params, &validationFields, "uri"); if !ok {
+			ok, err := validator.validateRequestParts(&context, schema.URI, validator.normalizeUri(ctx), &validationFields, "uri")
+			if !ok {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
 		}
 		if schema.Body != nil {
-			bodyData, err := ioutil.ReadAll(ctx.Request.Body); if err != nil {
+			bodyData, err := ioutil.ReadAll(ctx.Request.Body)
+			if err != nil {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
 			var body interface{}
-			err = json.Unmarshal(bodyData, &body); if err != nil {
+			err = json.Unmarshal(bodyData, &body)
+			if err != nil {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
-			ok, err := validator.validateRequestParts(&context, schema.Body, body, &validationFields, "body"); if !ok {
+			ok, err := validator.validateRequestParts(&context, schema.Body, body, &validationFields, "body")
+			if !ok {
 				return false, &apperror.ValidationError{
-					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error() }},
+					Errors: []apperror.ValidationField{{FieldName: "NA", Message: err.Error()}},
 				}
 			}
 			ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyData))
 		}
 	}
-	
+
 	if len(validationFields) > 0 {
 		return false, &apperror.ValidationError{
 			Errors: validationFields,
@@ -121,23 +130,25 @@ func (validator *Validator) validateSchema(schema *ValidationModel, ctx *gin.Con
 
 func (validator *Validator) validateRequestParts(
 	context *context.Context,
-	schema *jsonschema.Schema, 
-	data interface{}, 
+	schema *jsonschema.Schema,
+	data interface{},
 	fields *[]apperror.ValidationField,
 	fieldName string) (bool, error) {
 	if schema != nil {
-		dataBytes, err := json.Marshal(data); if err != nil {
+		dataBytes, err := json.Marshal(data)
+		if err != nil {
 			return false, fmt.Errorf("invalid request %s", fieldName)
 		}
-		keyErrors, err := schema.ValidateBytes(*context, dataBytes); if err != nil {
+		keyErrors, err := schema.ValidateBytes(*context, dataBytes)
+		if err != nil {
 			return false, fmt.Errorf("request %s validation failed", fieldName)
 		}
 		if len(keyErrors) > 0 {
 			for _, keyErr := range keyErrors {
 				validationField := apperror.ValidationField{
 					FieldName: keyErr.PropertyPath,
-					Message: keyErr.Message,
-					Details: keyErr.InvalidValue,
+					Message:   keyErr.Message,
+					Details:   keyErr.InvalidValue,
 				}
 				*fields = append(*fields, validationField)
 			}
@@ -146,13 +157,24 @@ func (validator *Validator) validateRequestParts(
 	return true, nil
 }
 
+func (validator *Validator) normalizeUri(ctx *gin.Context) map[string]interface{} {
+	outparam := map[string]interface{}{}
+	if ctx.Params != nil {
+		for _, param := range ctx.Params {
+			outparam[param.Key] = param.Value
+		}
+	}
+	return outparam
+}
+
 func (validator *Validator) Validate(key string, cfg *config.Config, handler gin.HandlerFunc) gin.HandlerFunc {
 	schema, err := validator.loadSchema(key, cfg)
 	return func(ctx *gin.Context) {
 		if err != nil {
 			ctx.AbortWithError(http.StatusPreconditionFailed, err)
 		}
-		ok, validationError := validator.validateSchema(schema, ctx); if ok {
+		ok, validationError := validator.validateSchema(schema, ctx)
+		if ok {
 			handler(ctx)
 		} else {
 			ctx.AbortWithError(http.StatusBadRequest, validationError)

@@ -48,7 +48,7 @@ func (controller *AcmeFlightController) CreateFlight(cfg *config.Config) gin.Han
 }
 
 func (controller *AcmeFlightController) GetFlightById(cfg *config.Config) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+	return controller.validator.Validate(validation.SCHEMA_GET_FLIGHT, cfg, func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
@@ -59,7 +59,7 @@ func (controller *AcmeFlightController) GetFlightById(cfg *config.Config) gin.Ha
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 		ctx.JSON(http.StatusOK, flight)
-	}
+	})
 }
 
 func (controller *AcmeFlightController) PutFlightById(cfg *config.Config) gin.HandlerFunc {

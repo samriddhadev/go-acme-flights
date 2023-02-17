@@ -46,8 +46,13 @@ content-type: application/json
 }
 
 ###
+# Get flight by id - Error
+GET http://localhost:7000/api/flights/abc
+###
+
+###
 # Get flight by id
-GET http://localhost:7000/api/flights/13
+GET http://localhost:7000/api/flights/15
 ###
 
 ###
