@@ -7,6 +7,7 @@ import (
 
 	"github.com/samriddhadev/go-acme-flights/config"
 	"github.com/samriddhadev/go-acme-flights/domain"
+	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/uptrace/bun"
 )
 
@@ -18,12 +19,27 @@ type AcmeFlightRepository struct {
 	BaseRepository
 }
 
-func (repository *AcmeFlightRepository) FindAll(cfg *config.Config) (*[]domain.Flight, error) {
+func (repository *AcmeFlightRepository) FindAll(cfg *config.Config, filter *model.FlightFilter) (*[]domain.Flight, error) {
 	ctx := context.Background()
 	db := repository.GetDB(cfg)
 	defer db.Close()
 	flights := []domain.Flight{}
-	err := db.NewSelect().Model(&flights).Relation("Segment").Scan(ctx)
+	query := db.NewSelect().Model(&flights).Relation("Segment")
+	if filter != (&model.FlightFilter{}) {
+		if len(filter.Origin) > 0 {
+			query = query.Where("segment.origin = ?", filter.Origin)
+		}
+		if len(filter.Destination) > 0 {
+			query = query.Where("segment.destination = ?", filter.Destination)
+		}
+		if !filter.FromDate.IsZero() {
+			query = query.Where("scheduled_departure_time >= ?", filter.FromDate)
+		}
+		if !filter.ToDate.IsZero() {
+			query = query.Where("scheduled_arrival_time >= ?", filter.ToDate)
+		}
+	}
+	err := query.Scan(ctx)
 	return &flights, err
 }
 
@@ -80,6 +96,7 @@ func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, fl
 		}
 		flight.SegmentID = segment.Id
 		flight.Segment.Id = segment.Id
+		flight.Id = int64(id)
 		_, err = tx.NewUpdate().Model(flight).Where("fl.id = ?", id).Exec(ctx)
 		if err != nil {
 			log.Println(err)

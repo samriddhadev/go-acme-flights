@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -25,9 +26,16 @@ type AcmeFlightController struct {
 
 func (controller *AcmeFlightController) GetFlights(cfg *config.Config) gin.HandlerFunc {
 	return controller.validator.Validate(validation.SCHEMA_GET_FLIGHTS, cfg, func(ctx *gin.Context) {
-		flights, err := controller.flightService.GetFlights(cfg)
+		var flightFilter model.FlightFilter
+		if err := ctx.ShouldBind(&flightFilter); err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+		log.Println(flightFilter)
+		flights, err := controller.flightService.GetFlights(cfg, &flightFilter)
 		if err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 		ctx.JSON(http.StatusOK, flights)
 	})
@@ -63,7 +71,7 @@ func (controller *AcmeFlightController) GetFlightById(cfg *config.Config) gin.Ha
 }
 
 func (controller *AcmeFlightController) PutFlightById(cfg *config.Config) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+	return controller.validator.Validate(validation.SCHEMA_UPDATE_FLIGHT, cfg, func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
@@ -77,7 +85,7 @@ func (controller *AcmeFlightController) PutFlightById(cfg *config.Config) gin.Ha
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 		ctx.JSON(http.StatusOK, flight)
-	}
+	})
 }
 
 func (controller *AcmeFlightController) DeleteFlightById(cfg *config.Config) gin.HandlerFunc {

@@ -19,9 +19,9 @@ type AcmeFlightService struct {
 	flightRepository repository.AcmeFlightRepository
 }
 
-func (service *AcmeFlightService) GetFlights(cfg *config.Config) (*[]model.Flight, error) {
+func (service *AcmeFlightService) GetFlights(cfg *config.Config, flightFilter *model.FlightFilter) (*[]model.Flight, error) {
 	flights := []model.Flight{}
-	entities, err := service.flightRepository.FindAll(cfg)
+	entities, err := service.flightRepository.FindAll(cfg, flightFilter)
 	if err != nil {
 		return &[]model.Flight{}, err
 	}

@@ -1,4 +1,16 @@
 {
+    "uri": {
+        "type": "object",
+        "required": [
+            "id"
+        ],
+        "properties": {
+            "id": {
+                "type": "string",
+                "pattern": "^[0-9]*$"
+            }
+        }
+    },
     "body": {
         "type": "object",
         "required": [

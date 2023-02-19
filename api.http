@@ -12,6 +12,21 @@ GET http://localhost:7000/api/flights?origin=BOM
 x-api-key: 4lyMcCg9V6qNmDSWSo21fTOfLIygHAFglMnLShD236WPt6YyLQ4aLvP7EYWr6DBXoSwc1kfN9RH3CPAAAw1y3Z4TPKiJSDMMOidrKJrdpZGctwTufIUphKxhUzn0LLjm
 ###
 
+# Get all flights - Success Case
+GET http://localhost:7000/api/flights?from_date=2023-02-13T00:00:00.00Z
+x-api-key: 4lyMcCg9V6qNmDSWSo21fTOfLIygHAFglMnLShD236WPt6YyLQ4aLvP7EYWr6DBXoSwc1kfN9RH3CPAAAw1y3Z4TPKiJSDMMOidrKJrdpZGctwTufIUphKxhUzn0LLjm
+###
+
+# Get all flights - Success Case
+GET http://localhost:7000/api/flights?origin=DEL
+x-api-key: 4lyMcCg9V6qNmDSWSo21fTOfLIygHAFglMnLShD236WPt6YyLQ4aLvP7EYWr6DBXoSwc1kfN9RH3CPAAAw1y3Z4TPKiJSDMMOidrKJrdpZGctwTufIUphKxhUzn0LLjm
+###
+
+# Get all flights - Success Case
+GET http://localhost:7000/api/flights
+x-api-key: 4lyMcCg9V6qNmDSWSo21fTOfLIygHAFglMnLShD236WPt6YyLQ4aLvP7EYWr6DBXoSwc1kfN9RH3CPAAAw1y3Z4TPKiJSDMMOidrKJrdpZGctwTufIUphKxhUzn0LLjm
+###
+
 # Create new flight - Error Case
 POST http://localhost:7000/api/flights HTTP/1.1
 content-type: application/json
@@ -46,6 +61,26 @@ content-type: application/json
 }
 
 ###
+# Create new flight
+POST http://localhost:7000/api/flights HTTP/1.1
+content-type: application/json
+
+{
+    "name": "IG002",
+    "origin": "DEL",
+    "destination": "BOM",
+    "miles": 100,
+    "scheduled_departure_time": "2023-02-13T00:00:00.00Z",
+    "scheduled_arrival_time": "2023-02-13T04:00:00.00Z",
+    "first_class_base_price": 3000.00,
+    "economy_class_base_price": 2200.90,
+    "num_first_class_seats": 50,
+    "num_economy_class_seats": 350
+}
+
+###
+
+
 # Get flight by id - Error
 GET http://localhost:7000/api/flights/abc
 ###
@@ -68,7 +103,7 @@ content-type: application/json
     "scheduled_departure_time": "2023-02-13T00:00:00.00Z",
     "scheduled_arrival_time": "2023-02-13T04:00:00.00Z",
     "first_class_base_price": 3001.00,
-    "economy_class_base_price": 2200.90,
+    "economy_class_base_price": 2208.90,
     "num_first_class_seats": 50,
     "num_economy_class_seats": 350
 }
