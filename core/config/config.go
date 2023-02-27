@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/samriddhadev/go-acme-flights/util"
+	"github.com/samriddhadev/go-acme-flights/core/environment"
 	"github.com/spf13/viper"
 )
 
@@ -15,6 +15,7 @@ type AppConfig struct {
 	AppName             string               `mapstructure:"app-name"`
 	Port                int                  `mapstructure:"port"`
 	BasePath            string               `mapstructure:"basepath"`
+	HealthCheck         string               `mapstructure:"healthcheck"`
 	APIValidationSchema map[string]string    `mapstructure:"api-validation-schemas"`
 	FlightDB            FlightDatabaseConfig `mapstructure:"flightdb"`
 }
@@ -42,8 +43,8 @@ func NewConfig() (*Config, error) {
 }
 
 func load() (Config, error) {
-	viper.SetConfigName(fmt.Sprintf("%s-%s", CONFIG_FILE_NAME, util.GetEnv(ENVIRONMENT, "local")))
-	viper.AddConfigPath("./config")
+	viper.SetConfigName(fmt.Sprintf("%s.%s", CONFIG_FILE_NAME, environment.GetEnv(ENVIRONMENT, "local")))
+	viper.AddConfigPath("./resources")
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Panicf("error - reading config file - %s", err)

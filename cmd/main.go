@@ -6,9 +6,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/samriddhadev/go-acme-flights/api/middleware"
-	"github.com/samriddhadev/go-acme-flights/config"
-	"github.com/samriddhadev/go-acme-flights/di"
+	"github.com/samriddhadev/go-acme-flights/core/config"
+	"github.com/samriddhadev/go-acme-flights/core/di"
 )
 
 func main() {
@@ -18,7 +17,6 @@ func main() {
 	if err != nil {
 		log.Panicf("error starting server - %s", err)
 	}
-	engine.Use(middleware.RequestIdHandlerMiddleware, middleware.ErrorHandlerMiddleware)
 	router := di.InitializeRouter(cfg, engine)
 	router.Handle()
 	log.Printf("server started at localhost:%d", cfg.Port)

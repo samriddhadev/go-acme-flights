@@ -1,6 +1,7 @@
 app-name: acme-flight-service
 port: 7000
 basepath: /api/flights
+healthcheck: /_health
 api-validation-schemas:
   get-flights: "jsonschema/get-flights.json"
   create-flight: "jsonschema/create-flight.json"

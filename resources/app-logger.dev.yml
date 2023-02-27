@@ -1,0 +1,18 @@
+level: info
+development: true
+disableCaller: false
+disableStacktrace: true
+encoding: console
+encoderConfig: 
+  timeKey: ts
+  levelKey: level
+  messageKey: msg 
+  nameKey: name
+  stacktraceKey: stacktrace
+  callerKey: caller
+  lineEnding: \n
+  levelEncoder: lowercaseLevel
+outputPaths:
+  - stdout
+errorOutputPaths:
+  - stderr

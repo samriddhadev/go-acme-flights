@@ -3,19 +3,22 @@ package service
 import (
 	"errors"
 
-	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/core/config"
+	"github.com/samriddhadev/go-acme-flights/core/logger"
 	"github.com/samriddhadev/go-acme-flights/domain"
 	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/samriddhadev/go-acme-flights/repository"
 )
 
-func NewAcmeFlightService(flightRepository repository.AcmeFlightRepository) AcmeFlightService {
+func NewAcmeFlightService(logger *logger.AcmeLogger, flightRepository repository.AcmeFlightRepository) AcmeFlightService {
 	return AcmeFlightService{
+		logger : logger,
 		flightRepository: flightRepository,
 	}
 }
 
 type AcmeFlightService struct {
+	logger *logger.AcmeLogger
 	flightRepository repository.AcmeFlightRepository
 }
 

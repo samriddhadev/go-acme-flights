@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/core/config"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"

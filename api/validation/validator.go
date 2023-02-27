@@ -6,14 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qri-io/jsonschema"
 	apperror "github.com/samriddhadev/go-acme-flights/api/error"
-	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/core/config"
+	"github.com/samriddhadev/go-acme-flights/core/logger"
 )
 
 const (
@@ -31,12 +31,15 @@ type ValidationModel struct {
 	Body   *jsonschema.Schema `json:"body"`
 }
 
-func NewValidator() Validator {
-	return Validator{}
+func NewValidator(logger *logger.AcmeLogger) Validator {
+	return Validator{
+		logger: logger,
+	}
 }
 
 type Validator struct {
 	schema map[string]*ValidationModel
+	logger *logger.AcmeLogger
 }
 
 func (validator *Validator) loadSchema(key string, cfg *config.Config) (*ValidationModel, error) {
@@ -45,10 +48,10 @@ func (validator *Validator) loadSchema(key string, cfg *config.Config) (*Validat
 	}
 	value, ok := validator.schema[key]
 	if !ok {
-		log.Printf("loading schema - %s", key)
+		validator.logger.Infof("loading schema - %s", key)
 		path, ok := cfg.APIValidationSchema[key]
 		if ok {
-			path = filepath.Join("./config", path)
+			path = filepath.Join("./resources", path)
 			content, err := ioutil.ReadFile(path)
 			if err != nil {
 				return &ValidationModel{}, fmt.Errorf("missing schema definition file - %s", key)

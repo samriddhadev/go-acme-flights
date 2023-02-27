@@ -3,20 +3,23 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"log"
 
-	"github.com/samriddhadev/go-acme-flights/config"
+	"github.com/samriddhadev/go-acme-flights/core/config"
+	"github.com/samriddhadev/go-acme-flights/core/logger"
 	"github.com/samriddhadev/go-acme-flights/domain"
 	"github.com/samriddhadev/go-acme-flights/model"
 	"github.com/uptrace/bun"
 )
 
-func NewAcmeFlightRepository() AcmeFlightRepository {
-	return AcmeFlightRepository{}
+func NewAcmeFlightRepository(logger *logger.AcmeLogger) AcmeFlightRepository {
+	return AcmeFlightRepository{
+		logger: logger,
+	}
 }
 
 type AcmeFlightRepository struct {
 	BaseRepository
+	logger *logger.AcmeLogger
 }
 
 func (repository *AcmeFlightRepository) FindAll(cfg *config.Config, filter *model.FlightFilter) (*[]domain.Flight, error) {
@@ -51,18 +54,18 @@ func (repository *AcmeFlightRepository) InsertOne(cfg *config.Config, flight *do
 		var segment domain.FlightSegment = *flight.Segment
 		segmentResult, err := tx.NewInsert().Model(&segment).Exec(ctx)
 		if err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		if _, err = segmentResult.RowsAffected(); err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		flight.SegmentID = segment.Id
 		flight.Segment.Id = segment.Id
 		_, err = tx.NewInsert().Model(flight).Exec(ctx)
 		if err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		return nil
@@ -87,11 +90,11 @@ func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, fl
 		var segment domain.FlightSegment = *flight.Segment
 		segmentResult, err := tx.NewUpdate().Model(&segment).Where("flsg.id = ?", segment.Id).Exec(ctx)
 		if err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		if _, err = segmentResult.RowsAffected(); err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		flight.SegmentID = segment.Id
@@ -99,7 +102,7 @@ func (repository *AcmeFlightRepository) UpdateOne(cfg *config.Config, id int, fl
 		flight.Id = int64(id)
 		_, err = tx.NewUpdate().Model(flight).Where("fl.id = ?", id).Exec(ctx)
 		if err != nil {
-			log.Println(err)
+			repository.logger.Error(err.Error())
 			return err
 		}
 		return nil
