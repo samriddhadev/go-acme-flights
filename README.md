@@ -1,6 +1,6 @@
 ## A Reference Go Microservice implementation
 The project provides a reference Microservice implementation in Go laguage.
-This implementation tried to achieve a close resemble with the spring boot Microservice implementation (https://github.com/blueperf/acmeair-mainservice-springboot)
+This implementation tried to achieve a close resemble with the spring boot Microservice implementation (https://github.com/blueperf/acmeair-mainservice-springboot) - only the Flight API
 
 ### Frameworks 
 - RESTFul Interfaces: Gin Web Framework
